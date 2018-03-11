@@ -88,7 +88,7 @@ ifeq ($(PRINT_HELP),y)
 all:
 	@echo "$$ALL_HELP_INFO"
 else
-all: generated_files
+all: verify-deps generated_files
 	hack/make-rules/build.sh $(WHAT)
 endif
 
@@ -141,6 +141,22 @@ quick-verify:
 else
 quick-verify: verify_generated_files
 	QUICK=true SILENT=false hack/make-rules/verify.sh
+endif
+
+define VERIFY_DEPS_HELP_INFO
+# Verifies all dependencies are installed
+#
+# Example:
+#   make verify-deps
+endef
+
+.PHONY: verify-deps
+ifeq ($(PRINT_HELP),y)
+verify-deps:
+	@echo "$$VERIFY_DEPS_HELP_INFO"
+else
+verify-deps:
+	build/make-verify.sh
 endif
 
 define UPDATE_HELP_INFO
@@ -308,7 +324,7 @@ ifeq ($(PRINT_HELP),y)
 clean:
 	@echo "$$CLEAN_HELP_INFO"
 else
-clean: clean_meta
+clean: verify-deps clean_meta
 	build/make-clean.sh
 	hack/make-rules/clean.sh
 endif
